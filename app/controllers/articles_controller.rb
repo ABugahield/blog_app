@@ -47,9 +47,14 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
-    if @article.destroy
-      flash[:success] = "Article has been deleted"
-      redirect_to articles_path
+    unless @article.user == current_user
+      flash[:alert] = "You can only delete you own article"
+      redirect_to root_path
+    else
+      if @article.destroy
+        flash[:success] = "Article has been deleted"
+        redirect_to root_path
+      end
     end
   end
 
@@ -63,6 +68,7 @@ class ArticlesController < ApplicationController
 
 
   private 
+
 
     def article_params
       params.require(:article).permit(:title, :body)
